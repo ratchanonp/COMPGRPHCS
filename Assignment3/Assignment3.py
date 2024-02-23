@@ -8,7 +8,7 @@
 """
 
 import matplotlib.pyplot as plt
-from numpy import cos, sin, pi, linspace, lcm
+from numpy import cos, sin, pi, linspace
 
 
 def epitrochoid(ax: plt.Axes, a: int, b: int, k: int, color: str, thickness: int, rev: int = 1) -> None:
