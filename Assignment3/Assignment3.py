@@ -8,48 +8,84 @@
 """
 
 import matplotlib.pyplot as plt
-import numpy as np
+from numpy import cos, sin, pi, linspace, lcm
 
-def epitrochoid(ax: plt.Axes, a: int, b: int, k: int, color: str, thickness: int) -> None:
-    t = np.linspace(0, 2 * np.pi, 1000)
-    x = (a + b) * np.cos(t) - k * np.cos((a + b) / b * t)
-    y = (a + b) * np.sin(t) - k * np.sin((a + b) / b * t)
+
+def epitrochoid(ax: plt.Axes, a: int, b: int, k: int, color: str, thickness: int, rev: int = 1) -> None:
+    
+    t = linspace(0, rev, 1000)
+
+    x = ((a + b) * cos(2 * pi * t)) - (k * cos((2 * pi) * (((a + b) * t) / b)))
+    y = ((a + b) * sin(2 * pi * t)) - (k * sin((2 * pi) * (((a + b) * t) / b)))
+    
     ax.plot(x, y, color=color, linewidth=thickness)
     ax.set_title(f"Epitrochoid \n a={a}, b={b}, k={k}")
+    ax.set_aspect('equal')
 
-def hypotrochoid(ax: plt.Axes, a: int, b: int, k: int, color: str, thickness: int) -> None:
-    t = np.linspace(0, 2 * np.pi, 1000)
-    x = (a - b) * np.cos(t) + k * np.cos((a - b) / b * t)
-    y = (a - b) * np.sin(t) - k * np.sin((a - b) / b * t)
+def hypotrochoid(ax: plt.Axes, a: int, b: int, k: int, color: str, thickness: int, rev: int = 1) -> None:
+
+    t = linspace(0, rev, 1000)
+
+    x = ((a - b) * cos(2 * pi * t)) + (k * cos((2 * pi) * (((a - b) * t) / b)))
+    y = ((a - b) * sin(2 * pi * t)) - (k * sin((2 * pi) * (((a - b) * t) / b)))
+
     ax.plot(x, y, color=color, linewidth=thickness)
     ax.set_title(f"Hypotrochoid \n a={a}, b={b}, k={k}")
+    ax.set_aspect('equal')
 
 def main():
-    # (a) 𝑎 = 20, 𝑏 = 15, 𝑘 = 30 with red color and 1-pixel thick
-    fig, (epitrochoid_ax, hypotrochoid_ax) = plt.subplots(1, 2)
-    epitrochoid(epitrochoid_ax, 20, 15, 30, 'red', 1)
-    hypotrochoid(hypotrochoid_ax, 20, 15, 30, 'red', 1)
-    fig.savefig(f"Assignment3/Assignment3_a.png")
 
-    # (b) 𝑎 = 30, 𝑏 = 45, 𝑘 = 20 with green color and 3-pixel thick
-    fig, (epitrochoid_ax, hypotrochoid_ax) = plt.subplots(1, 2)
-    epitrochoid(epitrochoid_ax, 30, 45, 20, 'green', 3)
-    hypotrochoid(hypotrochoid_ax, 30, 45, 20, 'green', 3)
-    fig.savefig(f"Assignment3/Assignment3_b.png")
+    problem = [
+        {
+            "name": "a",
+            "a": 20,
+            "b": 15,
+            "k": 30,
+            "color": "red",
+            "thickness": 1,
+            "rev": 3
+        },
+        {
+            "name": "b",
+            "a": 30,
+            "b": 45,
+            "k": 20,
+            "color": "green",
+            "thickness": 3,
+            "rev": 3
+        },
+        {
+            "name": "c",
+            "a": 50,
+            "b": 35,
+            "k": 15,
+            "color": "blue",
+            "thickness": 2,
+            "rev": 7
+        },
+        {
+            "name": "d",
+            "a": 15,
+            "b": 55,
+            "k": 35,
+            "color": "purple",
+            "thickness": 3,
+            "rev": 11
+        }
+    ]
 
-    # (c) 𝑎 = 50, 𝑏 = 35, 𝑘 = 15 with blue color and 2-pixel thick
-    fig, (epitrochoid_ax, hypotrochoid_ax) = plt.subplots(1, 2)
-    epitrochoid(epitrochoid_ax, 50, 35, 15, 'blue', 2)
-    hypotrochoid(hypotrochoid_ax, 50, 35, 15, 'blue', 2)
-    fig.savefig(f"Assignment3/Assignment3_c.png")
+    for p in problem:
+        a, b, k = p["a"], p["b"], p["k"]
+        color, thickness = p["color"], p["thickness"]
+        rev = p["rev"]
 
-    # (d) 𝑎 = 15, 𝑏 = 55, 𝑘 = 35 with purple color and 3-pixel thick
-    fig, (epitrochoid_ax, hypotrochoid_ax) = plt.subplots(1, 2)
-    epitrochoid(epitrochoid_ax, 15, 55, 35, 'purple', 3)
-    hypotrochoid(hypotrochoid_ax, 15, 55, 35, 'purple', 3)
-    fig.savefig(f"Assignment3/Assignment3_d.png")
+        fig, (epitrochoid_ax, hypotrochoid_ax) = plt.subplots(1, 2)
+        epitrochoid(epitrochoid_ax, a, b, k, color, thickness, rev)
+        hypotrochoid(hypotrochoid_ax, a, b, k, color, thickness, rev)
 
-    plt.show()
+        plt.savefig(f"Assignment3/Assignment3_{p['name']}.png")
+
+        plt.show()
 
 if __name__ == "__main__":
     main()
