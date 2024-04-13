@@ -31,7 +31,6 @@ def animate(*args, **kwargs):
 
     ani = animation.FuncAnimation(fig, update, frames=range(0, rev*100), fargs=[a, b, k, line, func], interval=17, blit=True)
     ani.save(f"Assignment3/result/{kwargs['name']}.mp4", writer="ffmpeg", fps=60)
-    plt.show()
 
 def main():
     problem = [
