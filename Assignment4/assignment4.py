@@ -27,6 +27,7 @@ def custom():
 
     for _ in range(number_of_spline):
         spline_control_points = []
+        
         while True:
             corr = tuple(map(int, input("Enter control point (x, y): ").split()))
 
@@ -43,32 +44,47 @@ def custom():
 
 def dev_mode():
 
-    sections = []
+    bezier_sections = []
 
-    sections.append([(9,6), (0 ,13), (15, 23), (5, 26)])
+    bezier_sections.append([(9,6), (0 ,13), (15, 23), (5, 26)])
+    bezier_sections.append([(5,26), (11, 30), (14, 22), (20, 25)])
+    bezier_sections.append([(20, 25), (16, 21), (28, 13), (18, 6)])
+    bezier_sections.append([(18, 6), (15, 5), (12, 5), (9, 6)])
     
-    for section in sections:
-        control_points = section
+    b_spline_sections = []
+    b_spline_sections.append([(13, -1), (9,6), (5 ,13), (11, 23), (5, 26), (-1, 29)])
+    b_spline_sections.append([(-1, 24), (5, 26), (11, 28), (14, 23), (20, 25), (26, 27)])
+    b_spline_sections.append([(22, 28), (20, 25), (18, 21), (23, 13), (18, 6), (13, -1)])
+    b_spline_sections.append([(21, 7), (18, 6), (15, 5), (12, 5), (9, 6), (6, 7)])
 
-        bezier_point = bezier(control_points)
+    b_spline_degree_of_polynomial = 3
 
-        plt.plot(*zip(*bezier_point), "r-")
-        plt.plot(*zip(*control_points), "bo")
+    fig, (bezier_axs, b_spline_axs) = plt.subplots(1, 2, figsize=(20, 20))
 
-    # Plot Config
-    plt.grid(True)
+    for section in bezier_sections:
+        bezier_points = bezier(section)
+        bezier_axs.plot(*zip(*bezier_points), 'r-')
 
-    plt.gca().set_aspect('equal', adjustable='box')
+  
+    for section in b_spline_sections:
+        b_spline_points = b_spline(b_spline_degree_of_polynomial, section)
+        b_spline_axs.plot(*zip(*b_spline_points), 'b-')
 
-    plt.xticks(np.arange(-5, 35, 1))
-    plt.xticks(rotation=90)
-    
-    plt.yticks(np.arange(-5, 35, 1))
+    bezier_axs.grid(True)
+    bezier_axs.set_aspect('equal', adjustable='box')
+    bezier_axs.set_title("Bezier Curve")
 
-    plt.tick_params(axis='both', which='major', labelsize=8)
+    # Set x tick
+    bezier_axs.set_xticks(np.arange(-5, 35, 1))
+    bezier_axs.set_yticks(np.arange(-5, 35, 1))
+    b_spline_axs.set_xticks(np.arange(-5, 35, 1))
+    b_spline_axs.set_yticks(np.arange(-5, 35, 1))
 
-    plt.savefig("Assignment4/jar_cubic_bezier.png", dpi=300)
+    b_spline_axs.grid(True)
+    b_spline_axs.set_aspect('equal', adjustable='box')
+    b_spline_axs.set_title("B-Spline Curve")
 
+    plt.savefig("Assignment4/dev_mode.png", dpi=300)
     plt.show()
 
 def jar(show_control=False):
@@ -115,9 +131,15 @@ def jar(show_control=False):
             outter_handle[0] = start_outter_handle
             outter_handle[3] = end_outter_handle
 
+            print(f"Star Outter Handle: {start_outter_handle}")
+            print(f"End Outter Handle: {end_outter_handle}")
+
+
             inner_handle[0] = start_inner_handle
             inner_handle[3] = end_inner_handle
 
+            print(f"Start Inner Handle: {start_inner_handle}")
+            print(f"End Inner Handle: {end_inner_handle}")
 
     for section in handle_section:
         control_points, name = section[:-1], section[-1]
@@ -142,9 +164,6 @@ def jar(show_control=False):
     plt.tick_params(axis='both', which='major', labelsize=8)
 
     plt.savefig("Assignment4/jar_cubic_bezier.png", dpi=300)
-
-    plt.legend()
-
     plt.show()
 
 def find_intersection_at_coor(section_curve_points: list[tuple[int, int]], x=None, y=None):
@@ -222,7 +241,50 @@ def compute_coefficient(degree_of_polynomial: int) -> list[int]:
     return coefficients
 
 def b_spline(degree_of_polynomial: int, control_points: list[tuple[int,int]]) -> list[tuple[int, int]]:
-    return [()]
+    n_control_points = len(control_points)
+
+    assert (n_control_points - degree_of_polynomial) > 0, "Degree of polynomial must be less than number of control points"
+    assert n_control_points >= 2, "At least 2 control points are needed"
+
+    # Uniform Knots
+    knots = [i for i in range(n_control_points + degree_of_polynomial + 1)]
+
+    INTERVALS = 1000
+
+    points = []
+
+    for u in np.linspace(degree_of_polynomial, n_control_points, INTERVALS):
+
+        x = 0
+        y = 0
+
+        for i in range(n_control_points):
+            basis = B_kd(i, degree_of_polynomial, u, knots)
+            x += control_points[i][0] * basis
+            y += control_points[i][1] * basis
+
+        points.append((x, y))
+
+    return points
+
+
+def B_kd(k, d, u, knots):
+    if d == 0:
+        if knots[k] <= u < knots[k + 1]:
+            return 1
+        return 0
+
+    if knots[k + d] == knots[k]:
+        c1 = 0
+    else:
+        c1 = (u - knots[k]) / (knots[k + d] - knots[k]) * B_kd(k, d - 1, u, knots)
+
+    if knots[k + d + 1] == knots[k + 1]:
+        c2 = 0
+    else:
+        c2 = (knots[k + d + 1] - u) / (knots[k + d + 1] - knots[k + 1]) * B_kd(k + 1, d - 1, u, knots)
+
+    return c1 + c2
 
 if __name__ == "__main__":
     main()
