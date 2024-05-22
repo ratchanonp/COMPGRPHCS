@@ -5,9 +5,9 @@ import numpy as np
 def main():
 
     print("What do you want to draw?")
-    print("[1] Jar (preset)")
+    print("[1] Jar (preset) [only bezier]")
     print("[2] Custom")
-    print("[3] Dev Mode")
+    print("[3] Dev Mode [all]")
     choice = int(input("Enter choice: "))
 
     if choice == 1:
@@ -50,12 +50,16 @@ def dev_mode():
     bezier_sections.append([(5,26), (11, 30), (14, 22), (20, 25)])
     bezier_sections.append([(20, 25), (16, 21), (28, 13), (18, 6)])
     bezier_sections.append([(18, 6), (15, 5), (12, 5), (9, 6)])
+    bezier_sections.append([(19.5, 21), (25, 30), (30, 20), (21.9, 11.1)])
+    bezier_sections.append([(20.2, 19.1), (24, 28), (28, 20), (22.1, 13.1)])
     
     b_spline_sections = []
     b_spline_sections.append([(13, -1), (9,6), (5 ,13), (11, 23), (5, 26), (-1, 29)])
     b_spline_sections.append([(-1, 24), (5, 26), (11, 28), (14, 23), (20, 25), (26, 27)])
     b_spline_sections.append([(22, 28), (20, 25), (18, 21), (23, 13), (18, 6), (13, -1)])
     b_spline_sections.append([(21, 7), (18, 6), (15, 5), (12, 5), (9, 6), (6, 7)])
+    b_spline_sections.append([(13, 17), (19, 21), (25, 25), (30, 20), (21.1, 11), (12.2, 3)])
+    b_spline_sections.append([(14, 15), (19.5, 19), (24, 23), (28, 20), (21.1, 13), (14.2, 6)])
 
     b_spline_degree_of_polynomial = 3
 
@@ -83,6 +87,15 @@ def dev_mode():
     b_spline_axs.grid(True)
     b_spline_axs.set_aspect('equal', adjustable='box')
     b_spline_axs.set_title("B-Spline Curve")
+
+    # plot control points
+    for section in bezier_sections:
+        x, y = zip(*section)
+        bezier_axs.plot(x, y, 'bo')
+
+    for section in b_spline_sections:
+        x, y = zip(*section)
+        b_spline_axs.plot(x, y, 'bo')
 
     plt.savefig("Assignment4/dev_mode.png", dpi=300)
     plt.show()
