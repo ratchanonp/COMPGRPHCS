@@ -51,7 +51,7 @@ requests @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_b
 RPG-text-engine==0.1.2
 ruamel.yaml @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/ruamel.yaml_1699241608430/work
 scipy @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_6f17pyifw3/croot/scipy_1714069789658/work/dist/scipy-1.13.0-cp312-cp312-macosx_11_0_arm64.whl#sha256=431f79321de6f5cbb09a4544ac8f8accbe05370813bfa1f04a999f0cd7a04646
-setuptools==68.2.2
+setuptools==70.0.0
 shapely==2.0.4
 six @ file:///tmp/build/80754af9/six_1644875935023/work
 tornado @ file:///Users/builder/cbouss/perseverance-python-buildout/croot/tornado_1699243541634/work
